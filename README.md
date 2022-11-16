@@ -12,9 +12,7 @@
 
 ## 论文笔记
 
-### 论文集
+- [论文集](./论文笔记/论文集)
 
-- [一种基于跳跃hash的对象分布算法.pdf](./论文笔记/论文集/01 一种基于跳跃hash的对象分布算法_聂世强.pdf)
-- [A Fast, Minimal Memory, Consistent Hash Algorithm(Jump Consistent Hash)](./论文笔记/论文集/02 A Fast, Minimal Memory, Consistent Hash Algorithm(Jump Consistent Hash).pdf)
+- [文献记录](./论文笔记/文献记录)
 
-### 文献记录
