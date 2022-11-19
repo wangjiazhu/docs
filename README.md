@@ -16,3 +16,6 @@
 
 - [文献记录](./论文笔记/文献记录)
 
+## 技术文档
+
+- [win10安装Anaconda并配置python虚拟环境](./技术文档/win10安装Anaconda并配置python虚拟环境.md)
