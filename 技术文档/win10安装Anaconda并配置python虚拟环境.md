@@ -1,4 +1,9 @@
 # win10安装Anaconda并配置python虚拟环境
+- [win10安装Anaconda并配置python虚拟环境](#win10安装anaconda并配置python虚拟环境)
+  - [下载](#下载)
+  - [安装](#安装)
+  - [配置](#配置)
+  - [pycharm使用anaconda虚拟环境](#pycharm使用anaconda虚拟环境)
 
 ## 下载
 
@@ -75,10 +80,12 @@ win+r====>cmd====>`conda -V`
 
   3. 在`pip`文件夹下创建`pip.ini`文件,内容如下
 
-     > [global]
-     > index-url = http://mirrors.aliyun.com/pypi/simple/
-     > [install]
-     > trusted-host = mirrors.aliyun.com
+     ```txt
+     [global]
+     index-url = http://mirrors.aliyun.com/pypi/simple/
+     [install]
+     trusted-host = mirrors.aliyun.com
+     ```
 
   4. `pip config list`
 
