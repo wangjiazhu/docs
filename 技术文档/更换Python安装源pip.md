@@ -26,7 +26,7 @@
 
 3. 使用`pip config list`命令查看`pip`源是否修改成功
 
-![image-20221120134724282](https://s2.loli.net/2022/11/20/FkamoKgUxjXODYh.png)
+   ![image-20221120134724282](https://s2.loli.net/2022/11/20/FkamoKgUxjXODYh.png)
 
 ## Win 10更换pip源
 
@@ -45,5 +45,5 @@
 
 4. 进入DOS命令窗口,使用`pip config list`命令查看`pip`源是否修改成功
 
-![查看pip源](https://s2.loli.net/2022/11/19/a1vyClr5OSeW6Au.png)
+   ![查看pip源](https://s2.loli.net/2022/11/19/a1vyClr5OSeW6Au.png)
 
