@@ -20,3 +20,4 @@
 
 - [CentOS7安装Anaconda并配置Python虚拟环境](./技术文档/CentOS7安装Anaconda并配置Python虚拟环境.md)
 - [Win 10安装Anaconda并配置Python虚拟环境](./技术文档/win10安装Anaconda并配置python虚拟环境.md)
+- [更换Python安装源pip](./技术文档/更换Python安装源pip.md)
