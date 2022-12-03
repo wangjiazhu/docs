@@ -364,6 +364,77 @@ requests with probability at least $1 - O(\frac{\log{dq}}{N})$ . Replacing $N$ b
 
 ## 4 Consistent Hashing
 
-​		In this section we define a new hashing technique called consistent hashing. We motivate this technique by reference to a simple scheme for data replication on the Internet. Consider a single server that has a large number of objects that other clients might want to access. 
+**一致性哈希**
 
-> ​		在本节中，我们定义了一种新的哈希技术，成为 一致性哈希。我们通过引用Internet上数据复制的简单方案来推动这一技术。考虑具有大量其他客户端可能想要访问的对象是单个服务器。
+​		In this section we define a new hashing technique called consistent hashing. We motivate this technique by reference to a simple scheme for data replication on the Internet. Consider a single server that has a large number of objects that other clients might want to access. It is natural to introduce a layer of caches between the clients and the server in order to reduce the load on the server. In such a scheme, the objects should be distributed across the caches, so that each is responsible for a roughly equal share. In addition, clients need to know which cache to query for a specific object. The obvious approach is hashing. The server can use a hash function that evenly distributes the objects across the caches. Clients can use the hash function to discover which cache stores a object. Consider now what happens when the set of active caching machines changes, or when each client is aware of a different set of caches. (Such situations are very plausible on the Internet.) If the distribution was done with a classical hash function (for example, the linear congruential function $x \mapsto ax + b (mod \ p)$), such inconsistencies would be catastrophic. When the range of the hash function ( p in the example) changed, almost every item would be  hashed to a new location. Suddenly, all cached data is useless because clients are looking for it in a different location. 
+
+> ​		在本节中，我们定义了一种新的哈希技术，称为一致性哈希。我们通过引用Internet上数据复制的简单方案来推动这一技术。考虑具有大量其他客户端可能想要访问的对象是单个服务器。为了减轻服务器的负载，在客户端和服务器之间引入一层缓存是很自然的。在这种方案中，对象应该分布在缓存中，以便使每个缓存负责大致相等的份额。此外，客户端需要知道要查询哪个缓存以查找特定对象，这显然用哈希。服务器可以使用哈希函数，将对象均匀分布在缓存中。客户端可以使用哈希函数来发现对象存储在哪个缓存上。现考虑一组活动缓存机器发生变化时，或者每个客户端都知道一组不同的缓存时，会发生什么 。（这种情况在互联网上很合理）.如果使用经典哈希函数（例如：线性同余函数 $x \mapsto ax + b (mod \ p)$）进行分布，那么这种不一致行将是灾难性的。当哈希函数的范围（示例中是p）发生变化时，几乎每个项都会哈希到一个新的位置。突然间，所有缓存的数据都变得没用了，因为客户端正在不同的位置查找数据。
+
+​		Consistent hashing solves this problem of different “views.” We define a view to be the set of caches of which a particular client is aware. We assume that while views can be inconsistent, they are substantial: each machine is aware of a constant fraction of the currently operating caches. A client uses a consistent hash function to map a object to one of the caches in its view. We analyze and construct hash functions with the following consistency properties. First, there is a “smoothness” property. When a machine is added to or removed from the set of caches, the expected fraction of objects that must be moved to a new cache is the minimum needed to maintain a balanced load across the caches. Second, over all the client views, the total number of different caches to which a object is assigned is small. We call this property “spread”. Similarly, over all the client views, the number of distinct objects assigned to a particular cache is small. We call this property “load”. 
+
+> ​		一致性哈希解决了不同“视图”的问题。我们将视图定义为特定客户端所知道的缓存集。我们假设虽然视图可能不一致，但他们是实质性的；每台机器都知道当前正在运行的缓存的一部分。客户端使用一致性哈希函数将对象映射到其视图中的缓存之一。我们分析并构造具有以下一致性属性的哈希函数。首先，有一个“平滑”属性。当一台机器被添加到缓存组或从缓存组中删除时，必须移动到新缓存的预期对象数是保持缓存间负载平衡所需要的最小值。其次，在所有客户端视图中，分配给对象的不同缓存的总数很少。我们称此属性为“传播”。同样，在所有客户端视图中，分配给特定缓存的不同对象的数量是最小的。我们称这个属性为“负载”。
+
+​		Consistent hashing therefore solves the problems discussed above. The “spread” property implies that even in the presence of inconsistent views of the world, references for a given object are directed only to a small number of caching machines. Distributing a object to this small set of caches will insure access for all clients, without using a lot of storage. The “load” property implies that no one cache is assigned an unreasonable number of objects. The “smoothness” property implies that smooth changes in the set of caching machines are matched by a smooth evolution in the location of cached objects. 
+
+> ​		因此，一致性哈希解决了上面讨论的问题。“传播”属性意味着即使在整个视图不一致的情况下，给定对象的引用也指会指向少数缓存机器。将对象分发到这一小组缓存将确保所有的客户端都可访问，而无需使用大量存储空间。“负载”属性意味着没有一个缓存分配了不合理数量的对象。“平滑”意味着缓存机器集中的平滑变化与缓存对象位置的平滑变化相匹配/
+
+​		Since there are many ways to formalize the notion of consistency as described above, we will not commit to a precise definition. Rather, in Section 4.4 we define a “ranged hash function” and then precisely define several quantities that capture different aspects of “consistency”. In Section 4.2 we construct practical hash functions which exhibit all four to some extent. In Section 4.4, we discuss other aspects of consistent hashing which, though not germane to this paper, indicate some of the richness underlying the theory. 
+
+> ​		由于有很多方法可以将上述一致性的概念形式化，因此我们不会提供一个精确的定义。相反，在4.4节中，我们定义了一个“范围哈希函数”，然后精确地定义了几个捕获“一致性”不同方面的量。在4.2节中，我们构建了实际的哈希函数，在一定程度上展示了这四个函数。在4.4节中，我们讨论了一致性哈希的其他方面，虽然与本文无关，但表明了该理论背后的一些丰富性。
+
+### 4.1 Definitions
+
+**定义**
+
+In this section, we formalize and relate four notions of consistency. 
+
+> ​		在本节中，我们将一致性的四个概念形式化并联系起来。
+
+​		Let $I$ be the set of items and $B$ be the set of buckets. Let I$ = |I|$ be the number of items. A view is any subset of the buckets $B$ . 
+
+> ​		令$I$表示项目集，$B$是存储桶集。令I$=|I|$为项目数。视图是存储桶$B$的任何子集。
+
+​		A ranged hash function is a function of the $f = 2^{B} \times I \mapsto B$ . Such a function specifies an assignment of items to buckets for every possible view. That is, $f(\upsilon,i)$ is the bucket to which item $i$ is assigned in view $\upsilon$ . (We will use the notation $f_{\upsilon}(i)$ in place $f(\upsilon,i)$ from now on.) Since items should only be assigned to usable buckets, we require $f_{\upsilon}(I) \subseteq \upsilon$ for every view $\upsilon$ . 
+
+> ​		范围哈希函数是$f = 2^{B} \times I \mapsto B$的函数形式。这样的函数为每个可能的视图指定一个项到桶的分配。也就是说，$f(\upsilon,i)$是视图$\upsilon$中项$i$分配到的桶。（从西安载器，我么能将用$f_{\upsilon}(i)$来代替$f(\upsilon,i)$）。由于项只应分配给可用的桶，因此对于每个视图，我们需要$f_{\upsilon}(I) \subseteq \upsilon$.
+
+ 		A ranged hash family is a family of ranged hash functions. A random ranged hash function is a function drawn at random from a particular ranged hash family. 
+
+> ​		范围哈希族是一系列范围函数。随机范围哈希函数是从特定范围哈希组中随机抽取的函数。
+
+​		In the remainder of this section, we state and relate some reasonable notions of consistency regarding ranged hash families. Throughout, we use the following notational conventions: $F$ is a ranged hash family, $f$ is a ranged hash function, $\upsilon$ is a view, $i$ is an item, and $b$ is a bucket. 
+
+> ​		在本节的剩余部分，我们阐述并联系了关于范围哈希族的一些合理的一致性概念。在整个过程中，我们使用以下符号约定：$F$是一个范围哈希族，$f$是一个随机范围哈希函数。$\upsilon$是一个视图，$i$是一个项，$b$是一个存储桶。
+
+**Balance:**	A ranged hash family is balanced if, given a particular view $\upsilon$ a set of items, and a randomly chosen function selected from the hash family, with high probability the fraction of items mapped to each bucket is $O(\frac{1}{\upsilon})$ . 
+
+> **平衡性：**	如果给定一个特定视图$\upsilon$，一组项和从哈希族中随机选择的函数，且映射到每个存储桶的项的分数既有可能是$O(\frac{1}{\upsilon})$，则范围哈希函数是平衡的。	
+
+​		The balance property is what is prized about standard hash functions: they distribute items among buckets in a balanced fasion. 
+
+> ​		平衡属性是标砖哈希函数所重视的，他们以均衡的方式在桶之间分配项。
+
+**Monotonicity：**	A ranged hash function $f$ is monotone if for all views $\upsilon_1 \subseteq \upsilon_2 \subseteq B$, implies $f_{\upsilon_{1}}{(i)} = f_{\upsilon_{2}}{(2)}$. A ranged hash family is monotone if every ranged  hash function in it is.
+
+> **单调性：**	对于所有视图$\upsilon_1 \subseteq \upsilon_2 \subseteq B$,一个范围哈希函数是单调的，意味着$f_{\upsilon_{1}}{(i)} = f_{\upsilon_{2}}{(2)}$.如果其中的每个范围哈希函数都是单调的，那么它就是单调的。
+
+​		This property says that if items are initially assigned to a set of buckets $\upsilon_{1}$ and then some new buckets are added to form $\upsilon_{2}$ , then an item may move from an old bucket to a new bucket, but not from one old bucket to another. This reflects one intuition about consistency: when the set of usable buckets changes, items should only move if necessary to preserve an even distribution. 
+
+> ​		此属性表示，如果最初将一组项分配给自于存储桶$\upsilon_{1}$，然后再添加一些新桶形成存储桶组$\upsilon_{2}$，则项可以从旧存储桶移动到新的存储桶，但是不能从一个旧存储桶移动到另一个。这反映了一种关于一致性的直觉：当可用桶的集合发生变化时，只有在必要时项才能移动，以保持均匀分布。
+
+**Spread:** Let $\upsilon_{1} ... \upsilon_{v}$ be a set of views, altogether containing $C$ distinct buckets and each individually containing at least $\frac{C}{t}$ buckets. For a ranged hash function and a particular item $i$ ,the spread $\sigma(i)$ is the quantity $|\{ f_{\upsilon_{j}}(i)\}^{V}_{j=1}|$ .The spread of a hash function $\sigma(f)$ is the maximum spread of an item. The spread of a hash family is $\sigma$ if with high probability, the spread of a random hash function from the family is  $\sigma$. 
+
+> **分布：**	$\upsilon_{1} ... \upsilon_{v}$是一组视图，总共包含$C$个不同的桶，每个视图至少包含$\frac{C}{t}$个存储桶。对于一个范围内的哈希函数和一个特定特定项$i$，分布$\sigma(i)$的数量是$|\{ f_{\upsilon_{j}}(i)\}^{V}_{j=1}|$，哈希函数$\sigma(f)$的分布是项的最大分布。哈希族的分布是$\sigma$具有很高的概率，哈希族中的随机哈希函数的分布就是$\sigma$。
+
+​		The idea behind spread is that there are $V$ people, each of whom can see at least a constant fraction ($\frac{1}{t}$) of the buckets that are visible to anyone. Each person tries to assign an item $i$ to a bucket using a consistent hash function. The property says that across the entire group, there are at most $\sigma(i)$ different opinions about which bucket should contain the item. Clearly, a good consistent hash function should have low spread over all items. 
+
+> ​		分布背后的想法是，有$V$个人，每个人至少都可以看到任何人都能看到的桶的$\frac{1}{t}$。每个人都试图用一致性哈希函数将项$i$分配给一个桶。该属性表示，在整个组中，最多有$\sigma(i)$个关于哪个存储桶应该包含项的不同意见。显然，一个良好的一致性哈希函数应该在所有项上岗会员体验低的分布律。
+
+**Load:** Define a set of $V$ views as before. For a ranged hash function $f$ and bucket $b$ ,the load $\lambda(b)$ is the quantity  $|\cup_{\upsilon} f_{\upsilon}^{-1}(b)|$ . The load of a hash function is the maximum load of a bucket. The load of a hash family is $\lambda$ if with high probability, a randomly chosen hash function has load $\lambda$ . (Note that $f_{\upsilon}^{-1}(b)$ is the set of items assigned to bucket $b$ in view $V$ .) The load property is similar to spread. The same $V$ people are back, but this time we consider a particular bucket $b
+$ instead of an item. The property says that there are at most $\lambda(b)$ distinct items that at least one person thinks belongs in the bucket. A good consistent hash function should also have low load.  
+
+> **负载：**	像以前一样定义一组$V$视图。对于值域散列函数$f$和存储桶$b$，负载$\lambda(b)$是数量$|\cup_{\upsilon} f_{\upsilon}^{-1}(b)|$。哈希函数的最大负载是桶的最大负载。如果哈希族的负载很高概率是$\lambda$，则随机选择的哈希函数具有$\lambda$的负载。（注意，$f_{\upsilon}^{-1}(b)$是视图$V$中分配给存储桶$b$的项集。）负载属性类似与分布属性。同样的$V$个人回来了，但是这次我们考虑的是一个特定的桶$b$而不是一个项。该属性表示至少有一个人认为最多有$\lambda(b)$个不同的项属于存储桶$b$。一个好的一致性哈希函数还应该具有低负载。
+
+​	Our main result for consistent hashing is Theorem 4.1 which shows the existence of an efficiently computable monotonic ranged hash family with logarithmic spread and balance. 
+
+> ​		我们一致性哈希的主要结果是定理4.1,该定理表明了具有对数分布和平衡的有效可计算单调范围哈希族的存在。
