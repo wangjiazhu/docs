@@ -412,7 +412,7 @@ In this section, we formalize and relate four notions of consistency.
 
 ​		The balance property is what is prized about standard hash functions: they distribute items among buckets in a balanced fasion. 
 
-> ​		平衡属性是标砖哈希函数所重视的，他们以均衡的方式在桶之间分配项。
+> ​		平衡属性是标准哈希函数所重视的，他们以均衡的方式在桶之间分配项。
 
 **Monotonicity：**	A ranged hash function $f$ is monotone if for all views $\upsilon_1 \subseteq \upsilon_2 \subseteq B$, implies $f_{\upsilon_{1}}{(i)} = f_{\upsilon_{2}}{(2)}$. A ranged hash family is monotone if every ranged  hash function in it is.
 
@@ -438,3 +438,26 @@ $ instead of an item. The property says that there are at most $\lambda(b)$ dist
 ​	Our main result for consistent hashing is Theorem 4.1 which shows the existence of an efficiently computable monotonic ranged hash family with logarithmic spread and balance. 
 
 > ​		我们一致性哈希的主要结果是定理4.1,该定理表明了具有对数分布和平衡的有效可计算单调范围哈希族的存在。
+
+### 4.2 Construction
+
+**解释**
+
+​		We now give a construction of a ranged hash family with good properties. Suppose that we have two random functions $\gamma_{B}$ and $\gamma_{I}$ . The function $\gamma_{B}$ maps buckets randomly to the unit interval, and $\gamma_{I}$ does the same for items. $f_\upsilon(i)$ is defined to be the bucket $b \in \upsilon$ that minimizes $| \gamma_{B}(b) - \gamma_{I}(i) |$.In other words, $i$ is mapped to the bucket “closest” to $i$ . For reasons that will become apparent, we actually need to have more than one point in the unit interval associated with each bucket. Assuming that the number of buckets in the range is always less than $C$ , we will need $k\log(C)$ points for each bucket for some constant $k$ . The easiest way to view this is that each bucket is replicated $k\log(C)$ times, and then $\gamma_{B}$ maps each replicated bucket randomly. In order to economize on the space to represent a function in the family, and on the use of random bits, we only demand that the functions $\gamma_{b}$ and $\gamma_{I}$ map points $\log(C)$ way independently and uniformly to $[0,1]$ . Note that for each point we pick in the unit interval, we need only pick enough random bits to distinguish the point from all other points. Thus it is unlikely that we need more than log( number of points ) bits for each point. Denote the above described hash family as $ F$ . 
+
+> ​		我们给出了一个具有良好性质的有限哈希族的构造。假设我们有两个随机函数$\gamma_{B}$和$\gamma_{I}$，函数$\gamma_{B}$将存储桶随机映射到单位区间内，函数$\gamma_{I}$对项也是如此。$f_\upsilon(i)$被定义为使$|\gamma_{B}(b) - \gamma_{I}(i)|$最小的存储桶b，且b属于$\upsilon$。换句话说，项$i$映射到离$i$最近的存储桶。出于显而易见的原因，我们实际上需要在与每个桶关联的单位间隔中具有多余一个的节点。假设存储桶数量范围总是小于$C$，对于某个常数$k$，我们每个存储桶需要$k\log(C)$节点。看这一点的简单方法是每个存储桶被复制$k\log(C)$次，然后$\gamma_{B}$随机映射到每个复制的桶。为了节省空间表示来表示函数族中的一个函数，以及使用随机位，我们只要求函数$\gamma_{B}$和$\gamma_{I}$独立并且一直的将点$\log(C)$映射到区间$[0,1]$。注意，对于我们在单位间隔中选择的每个点，我们只需要选择足够的随机位来将节点与其他所有节点区分开来。因此，对于每个节点，我们不太可能需要超过对数(节点数)位。将上述哈希族表示为$F$。
+
+**Theorem 4.1**	The ranged hash family $F$ described above has the following properties: 
+
+1. $F$ is monotone.
+2. Balance: For a fixed view $V$，$P_r[f_v(i) = b] \le \frac{O(1)}{|\upsilon|}$ for $i \in I$ and $b \in V$, and, conditioned on the choice of $\gamma_B$,the assignments of items to buckets are log(C)-way independent.
+3. Spread: If the number if views $V = \rho C$ for some constant $\rho$,and the number items $I=C$,then for $i \in I$, $\rho(i)$ is $O(t\log(C))$ with probability greater than $1 - \frac{1}{C^{\Omega(1)}}$.
+4. Load: If $V$ and $I$ are as above, then for $b \in B$, $\lambda(b)$ is $O(t\log(C))$ with probability greater than $1 - \frac{1}{C^{\Omega(1)}}$. 
+
+> **定理4.1**	上述有限哈希族$F$具有以下性质：
+>
+> 1. $F$ 是单调的。
+> 2. 平衡性：对一个固定的视图$V$,当$i \in I$ 并且 $b \in V$,有$P_r[f_v(i) = b] \le \frac{O(1)}{|\upsilon|}$，以$\gamma_{B}$的选择为条件，项到桶的分配是$\log(C)$是独立的。
+> 3. 分布性：如果视图$V=\rho C$对于某个常数$\rho$，以及项数$I=C$,则对于$i \in I$，$\sigma(i)$是$O(t\log(C))$的概率大于$1 - \frac{1}{C^{\Omega(1)}}$。
+> 4. 负载性：如果$V$和$I$和上述一样，对于$b \in B$,$\lambda(b)$是$O(t\log(C))$的概率超过$1 - \frac{1}{C^{\Omega(1)}}$。
+
