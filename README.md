@@ -24,4 +24,4 @@
 
 ## 运维文档
 
-- [CentOS7 制作qcow2镜像](./运维文档/CentOS7 制作qcow2镜像.md)
+- [CentOS7 制作qcow2镜像](./运维文档/CentOS7制作qcow2镜像.md)
