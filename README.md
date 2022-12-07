@@ -9,6 +9,7 @@
 - [Python基础](./学习笔记/Python基础.md)
 - [Python常用操作](./学习笔记/Python常用操作.md)
 - [MySQL数据库基础](./学习笔记/MySQL数据库基础.md)
+- [Java常用操作](./学习笔记/Java常用操作.md)
 
 ## 论文笔记
 

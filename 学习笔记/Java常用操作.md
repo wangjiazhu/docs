@@ -730,4 +730,4 @@ public class ScannerDemo {
 
 ![image-20220823170121744](https://s2.loli.net/2022/12/07/1devBZkmH5AGQwO.png)
 
-> **说明：**异常类有两个主要的子类：<font color="red">```IOException```</font> 类和<font color="red"> ```RuntimeException```</font> 类。
+> **说明：** 异常类有两个主要的子类：<font color="red">```IOException```</font> 类和<font color="red"> ```RuntimeException```</font> 类。
