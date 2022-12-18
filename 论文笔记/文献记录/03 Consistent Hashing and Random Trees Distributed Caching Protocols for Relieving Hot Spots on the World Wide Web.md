@@ -461,8 +461,87 @@ $ instead of an item. The property says that there are at most $\lambda(b)$ dist
 > 3. 分布性：如果视图$V=\rho C$对于某个常数$\rho$，以及项数$I=C$,则对于$i \in I$，$\sigma(i)$是$O(t\log(C))$的概率大于$1 - \frac{1}{C^{\Omega(1)}}$。
 > 4. 负载性：如果$V$和$I$和上述一样，对于$b \in B$,$\lambda(b)$是$O(t\log(C))$的概率超过$1 - \frac{1}{C^{\Omega(1)}}$。
 
-**Proof (sketch):** Monotonicity is immediate. When a new bucket is added, the only items that move are those that are now closest to one of the new bucket's associated points. No items move between old buckets. The spread and load properties follow from the observation that with high probability, a point from every view falls into an interval of length $O(\frac{t}{C})$ . Spread follows by observing that the number of bucket points that fall in this size interval around an item point is an upper bound on the spread of that item, since no other bucket can be closer in any view. Standard Chernoff arguments apply to this case. Load follows by a similar argument where we count the number of item points that fall in the region “owned” by a bucket's associated points. Balance follows from the fact that when $k \log(C)$ points are randomly mapped to the unit interval, each bucket is with highu probability responsible for no more than a $\frac{O(1)}{|\upsilon|}$ fraction of the interval. The key here is to count the number of combinatroially distinct ways of assigning this large a fraction to the $k \log(C)$ points associated with a bucket. 
+**Proof (sketch):** Monotonicity is immediate. When a new bucket is added, the only items that move are those that are now closest to one of the new bucket's associated points. No items move between old buckets. The spread and load properties follow from the observation that with high probability, a point from every view falls into an interval of length $O(\frac{t}{C})$ . Spread follows by observing that the number of bucket points that fall in this size interval around an item point is an upper bound on the spread of that item, since no other bucket can be closer in any view. Standard Chernoff arguments apply to this case. Load follows by a similar argument where we count the number of item points that fall in the region “owned” by a bucket's associated points. Balance follows from the fact that when $k \log(C)$ points are randomly mapped to the unit interval, each bucket is with highu probability responsible for no more than a $\frac{O(1)}{|\upsilon|}$ fraction of the interval. The key here is to count the number of combinatroially distinct ways of assigning this large a fraction to the $k \log(C)$ points associated with a bucket. This turns out to be polynomial in C . We then argue that with high probability none of these possibilities could actually occur by showing that in each one an additional bucket point is likely to fall. We deduce that the actual length must be smaller than $O(\frac{1}{|V|})$ . All of the above proofs can be done with only log(C) -way independent mappings. 
 
-> **证明：（草图）**单调是直接的。添加新存储桶时，唯一移动的项是现在最接近新存储桶关联点之一的项，没有项再旧存储桶之间移动。从观察结果可以看出，每个视图中的一个点很可能落入长度为$O(\frac{t}{C})$的区间。通过观察落在项点周围的这个大小区间内的桶的节点数就是该项分布的上限。因为在任何视图中，没有其他桶可以更接近。标准切尔诺夫论点适用于这种情况。负载后米娜跟着一个类似的参数，我们计算属于存储桶关联节点“拥有”区域的项的点的数量。平衡性来源于以下事实：当$k \log(C)$个节点随机映射到单位区间时，每个存储桶的概率不超过区间的$\frac{O(1)}{\upsilon}$。这里的关键是计算将这一大部分分配给与存储桶关联的$k \log(C)$节点的组合不同方式的数量。
+> **证明：（草图）**单调是直接的。添加新存储桶时，唯一移动的项是现在最接近新存储桶关联点之一的项，没有项再旧存储桶之间移动。从观察结果可以看出，每个视图中的一个点很可能落入长度为$O(\frac{t}{C})$的区间。通过观察落在项点周围的这个大小区间内的桶的节点数就是该项分布的上限。因为在任何视图中，没有其他桶可以更接近。标准切尔诺夫论点适用于这种情况。负载后米娜跟着一个类似的参数，我们计算属于存储桶关联节点“拥有”区域的项的点的数量。平衡性来源于以下事实：当$k \log(C)$个节点随机映射到单位区间时，每个存储桶的概率不超过区间的$\frac{O(1)}{\upsilon}$。这里的关键是计算将这一大部分分配给与存储桶关联的$k \log(C)$节点的组合不同方式的数量。结果证明这是$C$中的多项式。然后。我们通过证明在每一种可能行中都有一个额外的桶点可能落下，来证明这些可能性中的任何一种都不可能真正发生。我们推断实际长度必须小于$O(\frac{1}{V})$。所有上述证明都可以只用对数$\log(C)$路独立映射来完成。
 
-![image-20221206213429138](https://s2.loli.net/2022/12/06/HdJtQskOEyzehia.png)
+​		The following corollary is immediate and is useful in the rest of the paper. 
+
+> ​		以下推论是直接的，对本文的其余部分很有用。
+
+**Corollary 4.2** With the same conditions of the previous theorem, $Pr[f_{v}(i) = b\ \ in \ any\ view] \le \frac{O(t\log(C))}{|V|}$ for $i \in I$ and $b \in B$.
+
+>  **推论4.2**  与之前的定理相同的条件，在任何视图中，当$i \in I$并且 $b \in B$的时候，有$Pr[f_{v}(i) = b] \le \frac{O(t\log(C))}{|V|}$.
+
+### 4.3 Implementation
+
+**实现**
+
+​		In this section we show how the hash family just dexcrobed can be implemented efficiently. Specifically, the expected running time for a single hash computation will be $O(1)$ . The expectation is over the choice of hash function. The expected running time for adding or deleting a bucket will be $O(log C)$ where $C$ is an upper bound on the total number of buckets in all views. 
+
+> ​		在本节中，我们将展示如何有效的实现刚刚被索引的哈希族。具体来说，单个哈希计算的运行时间将是$O(1)$。期望值超过哈希函数的选择时间。添加或删除存储桶预期运行时间是$O(\log(C))$，其中$C$是所有视图中存储桶数量的上限。
+
+​		A simple implementation uses a balanced binary search tree to store the correspondence between segments of the unit interval and buckets. If there are C buckets, then there will be $kC\log(C)$ intervals, so the search tree will have depth $O(log(C))$ . Thus, a single hash computation takes $O(log(C))$ time. The time for an addition or removal of a bucket is $O(log ^{2}(C))$ since we insert or delete $kC\log(C)$ points for each bucket. 
+
+> ​		一个简单的实现是使用二叉搜索树来存储单位区间的段和桶之间的映射关系。如果有$C$个桶，则将有$kC\log(C)$个间隔，因此，搜索树的深度是$O(log(C))$。因此单个哈希计算需要$O(\log(C))$。添加或删除存储桶的时间是$O(log ^{2}(C))$，因为每个存储桶插入或删除$kC\log(C)$个节点。
+
+​		The following trick reduces the expected running time of a hash computation to $O(1)$ . The idea is to divide the interval into roughly $kC\log(C)$ equal length segments, and to keep a separate search tree for each segment. Thus, the time to compute the hash function is the time to determine which interval $r_{I}(i)$ is in, plus the time to lookup the bucket in the corresponding search tree. The first time is always $O(1)$ . Since, the expected number of points in each segment is $O(1)$ , the second time is $O(1)$ in expectation. 
+
+> ​		以下技巧将哈希运算的预期运行时间减少到$O(1)$。其想法是将而且物价你划分为大约$kC\log(C)$个登场的段，并为每个段保留一个单独的搜索树。这样，计算哈希的时间就是确定$r_{I}(i)$在哪个区间的时间，加上相应的搜索树中查找桶的时间。第一次总是$O(1)$。由于每个段中预期的节点数是$O(1)$，因此第二次的预期也是O(1)。
+
+​		One caveat to the above is that as the number of buckets grows, the size of the subintervals needs to shrink. In order to deal with this issue, we will use intervals only of length $\frac{1}{2^x}$ for some $x$ .At first we choose the largest x such that $\frac{1}{2^x} \le \frac{1}{kC\log(C)}$ .  Then,  as points are added, we bisect segments gradually so that when we reach the next power of 2 , we have already divided all the segments. In this way we amortize the work of dividing search trees over all of the additions and removals. Another point is that the search trees in adjacent empty intervals may all need to be updated when a bucket is added since they may all now be closest to that bucket. Since the expected length of a run of empty intervals is small, the additional cost is negligible. For a more complete analysis of the running time we refer to the complete version of the paper. 
+
+> ​		上面的一个警告是，随着桶数量的增加，子区间的带线啊哦需要缩小。为了处理这个问题。我们将只对一些$x$使用长度为$\frac{1}{2^x}的区间。首先我们选择最大的$$x$使得$\frac{1}{2^x} \le \frac{1}{kC\log(C)}$，然后随着节点的增加，我们逐渐平分区间，当达到2的下一次幂时，我们已经划分了所有的区间。通过这种方式，我们分摊了添加和删除搜索树的工作。另外一点，当添加桶时，相邻空间区间中的搜索树可能需要更新，因为它们现在可能都离那个桶最近。由于空区间运行的预期的长度很小，因此额外成本可以忽略不计。如需更完整的运行时间分析，请阅读论文的完整版本。
+
+### 4.4 Some Theorems on Consistent Hashing
+
+**关于一致性哈希的一些定理**
+
+​		In this section, we discuss some additional features of consistent hashing which, though unneccessary for the remainder of the paper, demonstrate some of its interesting properties. 
+
+> ​		在本节中，我们讨论了一致性哈希的一些额外特性，尽管这对本问的其余部分来说是不必要的，但他展示了一些有趣的特性。
+
+​		To give insight into the monotone property, we will define a new class of hash functions and then show that this is equivalent to the class of monotone ranged hash functions. 
+
+> ​		为了深入了解单调属性，我们将定义一个新的哈希函数类别，然后证明这等价于单调有限哈希函数的类别。
+
+A  $\pi$-hash function is a hash function of the familiar form $f:2^{B} \times I \mapsto B$ constructed as follows. With each item $i \in I$ , associate a permutation $\pi(i)$ of all the buckets $B$ .Define $f_{\upsilon}(i)$ to be the first bucket in the permutation $\pi(i)$ that is contained in the view $V$ . Note that the permutations need not be chosen uniformly or independently. 
+
+> ​		一个$\pi$哈希是一种常见形式的哈希函数$f:2^{B} \times I \mapsto B$的构造如下。对于每个项$i \in I$，关联一个存储桶B的一个排列$\pi(i)$。定义$f_{\upsilon}(i)$为视图$V$中包含的排列$\pi(i)$的第一个存储桶。应注意，排列不需要均匀或独立地选择。
+
+**Theorem** 4.3 Every monotone ranged hash function is a  $\pi$-hash function and vice versa. 
+
+> **定理4.3**	每个单调受限哈希函数都是$\pi$哈希函数，反之亦然。
+
+**Proof(sketch):**	For a ranged hash function $f$，associate item $i$ with the permutation $b_{1} = f_{B}(i)$, ... ,$b_{j+1} = f_{B} - \{b_{1} ... b_{j}\}(i)$, ... Suppose $b_{j}$ is the first element of an arbitrary view $V_{i}$ in this permutation. Then $V_{i} \subseteq V_{2} = B - {b_{1} ... b_{j-1}}$.Since $f_{\upsilon_{2}} = b_{j} \in V_{1}$,monotonicity implies $f_{\upsilon_{2}} = b_{j}$.
+
+> **证明（草图）：**对于一个首先哈希函数$f$，将项$i$ 与排列$b_{1} ... b_{j+1}$关联。假设$b_{j}$是排列中任意一个视图$V_{i}$的第一个元素。那么$V_{i} \subseteq V_{2} = B - {b_{1} ... b_{j-1}}$.由于$f_{\upsilon_{2}} = b_{j} \in V_{1}$,单调性意味着$f_{\upsilon_{2}} = b_{j}$.
+
+​		The equivalence stated in Theorem 4.3 allows us to reason about monotonic ranged hash functions in terms of permutations associated with items. 
+
+> ​		定理4.3中给的陈述的等价行允许我们根据与项相关的排列来推理单调受限哈希函数。
+
+**Universality:** A ranged hash family is universal if restricting every function in the family to a single view creates a universal hash family. 
+
+> **通用性：**	如果将受限哈希族中的每个函数限制为单个视图来创建一个通用哈希族，则这个受限哈希族是通用的。
+
+​		This property is one way of requiring that a ranged hash function be well-behaved in every view. The above condition is rather stringent; it says that if a view is fixed, items are assigned randomly to the bins in that view. This implies that in any view $V$ , the expected fraction of items assigned to $j$ of the buckets is $\frac{j}{|V|}$ . Using only monotonicity and this fact about the uniformity of the assignment, we can determine the expected number of items reassigned when the set of usable buckets changes. This relates to the informal notion of “smoothness”. 
+
+> ​		此属性是要求首先哈希函数在每个视图中都表现良好的一种方式。上述条件相当苛刻；它表示，如果某个视图固定，则项将随机分配到该视图中的箱。这意味这在任何视图$V$中，分配给桶中$j$个的项的预期分数是$\frac{j}{|V|}$。仅使用调调行和分配的均匀性这个事实，我们可以确定当可用桶集发生变化时重新分配的项的预期数量。这与“平滑度”的非正式概念有关。
+
+**Theorem 4.4** Let f be a monotonic, universal ranged hash function. Let $V_{1}$ and $V_{2}$ be views. The expected fraction of items $i$ for which $f_{V_{1}} (i) = f_{V_{2}}(i)$ is $\frac{|V_{1}\cap V_{2}|}{|V_{1}\cup V_{2}|}$ . 
+
+>  **定理4.4**	设$f$是一个单调的、通用的受限哈希函数。设$V_{1}$和$V_{2}$是视图。$f_{V_{1}} (i) = f_{V_{2}}(i)$的项$i$的预期分数是$\frac{|V_{1}\cap V_{2}|}{|V_{1}\cup V_{2}|}$.
+
+**Proof (sketch):** Count the number of items that move as we add buckets from $V_{1}$ until the view is $V_{1} \cup V_{2}$ , and then delete buckets down to $V_{2}$.
+
+> **证明（草图）：**	当我们从$V_{1}$添加存储桶知道视图为$V_{1} \cup V_{2}$，然后删除存储桶到视图$V_{2}$时，计算移动的项数。
+
+​		Note that monotonicity is used only to show an upper bound on the number of items reassigned to a new bucket; this implies that one can not obtain a “more consistent” universal hash function by relaxing the monotone condition. 
+
+> ​		请注意，单调性仅用于显示重新分配给新存储桶的项数量的上限；这意味着不能通过放宽单调条件来获得“更一致”的通用哈希函数。
+
+​		We have shown that every monotone ranged hash function can be obtained by associating each item with a random permutation  of buckets. The most natural monotone consistent hash function is obtained by choosing these permutations independently and uniformly at random. We denote this function by $\overset{-}{f}$ . 
+
+> ​		我们已经证明，通过将每个项和存储桶的随机排列相关联，可以获得每个单调受限哈希函数。最自然的单调一致性哈希函数是通过随机独立均匀的选择这些排列来获得的。我们用$\overset{-}{f}$来表示这个函数。
+
