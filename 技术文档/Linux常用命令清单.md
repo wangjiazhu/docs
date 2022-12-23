@@ -22,7 +22,7 @@
   >
   > cpu监控工具：top htop
   >
-  > 内存监控工具：top free
+  > 内存监控工具：top free vmstat
   >
   > 网络监控工具：iftop
 
