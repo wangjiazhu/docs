@@ -28,3 +28,5 @@
 - [CentOS7网络配置](./运维文档/CentOS7网络配置.md)
 - [CentOS7制作qcow2镜像](./运维文档/CentOS7制作qcow2镜像.md)
 - [CentOS7配置IPTABLES防火墙](./运维文档/CentOS7配置IPTABLES防火墙.md)
+- [CentOS7配置免密登录](./运维文档/CentOS7配置免密登录.md)
+
