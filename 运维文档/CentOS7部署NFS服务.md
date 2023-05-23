@@ -72,4 +72,4 @@
 
 6. 检查客户端是否挂载成功
 
-![image-20230523161112518](https://s2.loli.net/2023/05/23/HEZILghQVoj3AnX.png)
+   ![image-20230523161112518](https://s2.loli.net/2023/05/23/HEZILghQVoj3AnX.png)
