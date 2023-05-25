@@ -31,4 +31,4 @@
 - [CentOS7配置免密登录](./运维文档/CentOS7配置免密登录.md)
 - [CentOS7安装Anaconda并创建Python虚拟环境](./运维文档/CentOS7安装Anaconda及创建Python虚拟环境.md)
 - [CentOS7部署NFS服务](./运维文档/CentOS7部署NFS服务.md)
-
+- [CentOS7部署DHCP服务](./运维文档/CentOS7部署DHCP服务.md)
