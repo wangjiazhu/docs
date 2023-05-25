@@ -7,7 +7,7 @@
    - 命令1
 
      ```bash
-     wget https://gitee.com/wangjiazhu/packages/raw/main/nfs-deployment.sh && sh dhcp-deployment.sh
+     wget https://gitee.com/wangjiazhu/packages/raw/main/dhcp-deployment.sh && sh dhcp-deployment.sh
      ```
 
      
@@ -15,7 +15,7 @@
    - 命令2
 
      ```bash
-     wget https://raw.githubusercontent.com/wangjiazhu/packages/main/nfs-deployment.sh && sh dhcp-deployment.sh
+     wget https://raw.githubusercontent.com/wangjiazhu/packages/main/dhcp-deployment.sh && sh dhcp-deployment.sh
      ```
 
      
