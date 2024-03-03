@@ -627,7 +627,7 @@ if __name__ == '__main__':
 
 <img src="https://s2.loli.net/2022/10/19/k7szVX1Bn2dpLOv.png" alt="image-20221019164634566" style="zoom:150%;" />
 
-## xlrd、xlwt、xlutils和openpyxl库
+## `xlrd、xlwt、xlutils`和`openpyxl`库
 
 > **库使用说明：**
 >
@@ -747,5 +747,64 @@ if __name__ == '__main__':
 
     write_excel_xlsx(book_name_xlsx, sheet_name_xlsx, value3)
     read_excel_xlsx(book_name_xlsx, sheet_name_xlsx)
+```
+
+***
+
+## `redis`模块
+
+> 可以对redis库进行读写操作
+
+安装模块：`pip install redis`
+
+```python
+import redis
+import pickle
+
+redis_client = redis.Redis(host="192.168.154.181", port=6379, db=0)
+prefix = f"mysite:1.0:t_user:id"
+key_list = ['1', '2']
+for key in key_list:
+    val = redis_client.get(prefix + f":{key}")
+    print(f"{key} --- {pickle.loads(val)}")
+
+redis_client.set("test", f"test1")
+
+```
+
+logging模块
+
+> 实现日志功能，可以将日志输出到终端或指定日志文件中
+
+```python
+import logging
+
+logFile = f"./log.txt"  #日志保存文件位置（如果不保存日志可以不设置）
+
+# 构造日志器
+logger = logging.getLogger("test_logger")   
+logger.setLevel(logging.DEBUG)
+
+# 可以将日志输出到终端、文件或者同时输出到两者
+# 创建日志终端处理器(将日志输出到终端)
+logConsoleHandel = logging.StreamHandler()
+logConsoleHandel.setLevel(logging.DEBUG)
+# 构造日志文件处理器（将日志输出到文件）
+logFileHandle = logging.FileHandler(f"{logFile}")   
+logFileHandle.setLevel(logging.DEBUG)
+
+# 构造日志格式化器
+logFormatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logFileHandle.setFormatter(logFormatter)
+# 将日志文件处理器添加到日志器
+logger.addHandler(logFileHandle)
+logger.addHandler(logConsoleHandel)
+
+# 输出不同级别的日志(同时输出到了终端和日志文件中)
+logger.debug('This is a debug message')
+logger.info('This is an info message')
+logger.warning('This is a warning message')
+logger.error('This is an error message')
+logger.critical('This is a critical message')
 ```
 

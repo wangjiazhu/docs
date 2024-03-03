@@ -209,11 +209,11 @@ class User(models.Model):
 
 
 
-### 缓存
-
-> 以 Redis 为例
+### Redis缓存
 
 #### 单缓存
+
+> 单缓存只有default这一个缓存选项，默认所有的缓存数据都会保存到default里面
 
 ```python
 CACHES = {
@@ -221,7 +221,7 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
         'LOCATION': 'redis://xxx:6379/0',
         "KEY_PREFIX": 'mysite', # 指定缓存的前缀名称(单缓存可以不指定)
-        "VERSION": '1' + ':' + 'user' + ':' + 'user_id' # 指定缓存的目录结构(单缓存可以不指定)
+        "VERSION": '1.0' + ':' + 'user' + ':' + 'user_id' # 指定缓存的目录结构(单缓存可以不指定)
     }, 
 }
 ```
@@ -249,6 +249,8 @@ print(f"all_keys:{all_keys}")
 
 #### 多缓存
 
+> 设置多个缓存，通过设置不同的缓存名称进行区分
+
 ```python
 # 设置缓存列表
 cache_list = ['default', 'user:user_id',]
@@ -260,7 +262,7 @@ for _name in cache_list:
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
         'LOCATION': 'redis://192.168.154.181:6379/0',
         "KEY_PREFIX": 'mysite',
-        "VERSION": '1' + ':' + _name
+        "VERSION": '1.0' + ':' + _name
     }
     cache_dict[_name] = _cache
 
@@ -281,8 +283,59 @@ from django.core.cache import caches
 cache_default = caches['default']       # 使用default缓存
 cache_user = caches['user:user_id']     # 使用user缓存
 
-cache_user.get_many([0, 1])             # 从user缓存中获取user_id为0和1的用户信息
-cache_default.get(key)				   # 从default缓存中获取key对应的信息
+cache_user.get_many([0, 1])             # 从user缓存中获取user_id为0和1的用户信息（一次性读取多个缓存记录）
+cache_default.get(key)				   # 从default缓存中获取key对应的信息（一次性读取一个缓存记录）
+
+cache_user.set()
+```
+
+一个缓存数据表中数据的demo
+
+```python
+from django.shortcuts import render
+from django.core.cache import caches
+from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.response import Response
+import logging
+import json
+
+from app01.models import User
+from app01.serializers import UserSerializer
+from app01.tools.dataformat import DataFormat
+
+logger = logging.getLogger("mysite")
+
+
+class CacheMysite(object):
+    def __init__(self) -> None:
+        self.return_data = DataFormat().data_format()
+        self.caches_default = caches["default"]
+        self.caches_t_user_id = caches["t_user:id"]
+        self.caches_t_user_name = caches["t_user:name"]
+
+    def caches_user(self, user_serializer_list):
+        # caches_dict = {}
+        for user in user_serializer_list:
+            # caches_dict[user.get("id")] = user
+            # print(user)
+            self.caches_t_user_id.set(f"{user.get('id')}", user, 3600)
+            self.caches_t_user_name.set(f"{user.get('name')}", user, 3600)
+        # self.caches_t_user_id.set_many(caches_dict)
+        self.return_data["type"] = "caches"
+        self.return_data["data"].append("t_user caches complete!")
+        return self.return_data
+
+
+# Create your views here.
+class UserView(APIView):
+    def get(self, request):
+        user_obj = User.objects.all()
+        user_serializer = UserSerializer(instance=user_obj, many=True).data
+        user_serializer_list = json.loads(json.dumps(user_serializer))
+        cc = CacheMysite()
+        return_data = cc.caches_user(user_serializer_list=user_serializer_list)
+        return Response(data=return_data, status=status.HTTP_200_OK)
 ```
 
 
@@ -425,5 +478,15 @@ STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'	  # 将静态文件收集至该独立目录下
 STATICFILES_DIRS = [BASE_DIR / 'static']  # 配置静态文件加载路径
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+```
+
+如何启动django项目的时候将静态资源文件加载到静态文件目录？
+
+1. 需要在项目启动脚本中执行以下命令：
+
+```bash
+python manage.py collectstatic --no-input	# 直接使用django框架自带的web服务启动
+
+uwsgi --ini uwsgi.ini --static-map /static=/app/staticfiles	# 使用uwsgi启动django项目
 ```
 
